@@ -41,30 +41,10 @@ class Realtime extends Component {
           this.setState({ displayName: profile.displayName });
           this.setState({ displayImg: profile.pictureUrl });
 
-          const db = firebase.firestore();
-          db.settings({
-            timestampsInSnapshots: true
-          });
+          
 
-          const queryList = db.collection("tracker").where('uid', '==', data.context.userId);
-          const getData = queryList.get();
 
-          getData.then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
-              console.log(doc.id, " => ", doc.data().hw);
-              //const hwId = doc.data().hw;
-              this.setState({ hwId: doc.data().hw });
-            });
-          })
-            .catch(function (error) {
-              console.log("Error getting documents: ", error);
-            });
 
-          this.setState({
-            displayName: profile.displayName,
-            displayImg: profile.pictureUrl,
-            isLoading: true
-          })
 
         });
 
@@ -74,6 +54,31 @@ class Realtime extends Component {
         })
       });
 
+    if (!this.state.userId) {
+      const db = firebase.firestore();
+      db.settings({
+        timestampsInSnapshots: true
+      });
+
+      const queryList = db.collection("tracker").where('uid', '==', this.state.userId);
+      const getData = queryList.get();
+
+      getData.then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
+          console.log(doc.id, " => ", doc.data().hw);
+          //const hwId = doc.data().hw;
+          this.setState({ hwId: doc.data().hw });
+        });
+      }).catch(function (error) {
+        console.log("Error getting documents: ", error);
+      });
+
+      this.setState({
+        isLoading: true
+      });
+    }
+
+    
     const locationRef = firebase.database().ref('/currentLocation/' + this.state.hwId);
     locationRef.on('value', (snapshot) => {
       let locationData = snapshot.val();
@@ -84,19 +89,29 @@ class Realtime extends Component {
         let longtitude = locationData[item].longtitude;
         let latitude = locationData[item].latitude;
         //alert(latitude);
-        this.setState({
-          currentLatLng: {
-            lat: latitude,
-            lng: longtitude
-          },
-          satellites: satellites,
-          altitude: altitude,
-          speed: speed
-        })
+        if (this.state.userId !== "") {
+          this.setState({
+            currentLatLng: {
+              lat: latitude,
+              lng: longtitude
+            },
+            satellites: satellites,
+            altitude: altitude,
+            speed: speed,
+            isDisplayMap: true
+          })
+        }
       }
-    })
+    });
+    
 
-    this.getGeoLocation();
+
+
+    if (!this.state.userId) {
+      console.log("no user data");
+      this.getGeoLocation();
+    }
+
 
   }
 
@@ -122,6 +137,22 @@ class Realtime extends Component {
 
   render() {
     if (this.state.isDisplayMap) {
+      let currentLocation = "";
+      if (this.state.userId !== "") {
+        currentLocation = <Marker
+          name={'Current location'}
+          position={this.state.currentLatLng}
+          icon={{
+            url: 'https://firebasestorage.googleapis.com/v0/b/iot-project-239110.appspot.com/o/car.png?alt=media&token=4f4923b9-906e-499c-a271-5bae3f47fa91',
+            size: { width: 35, height: 35 },
+            anchor: { x: 15, y: 50 },
+            scaledSize: { width: 35, height: 35 }
+          }}
+        />
+      }
+
+
+
       return (
         <div>
           <div style={mapStyle}>
@@ -133,16 +164,7 @@ class Realtime extends Component {
               zoom={16}
               onClick={this.onMapClicked}
             >
-              <Marker
-                name={'I am here'}
-                position={this.state.currentLatLng} 
-                icon={{
-                    url: 'https://firebasestorage.googleapis.com/v0/b/iot-project-239110.appspot.com/o/car.png?alt=media&token=4f4923b9-906e-499c-a271-5bae3f47fa91',
-                    size: {width: 35, height: 35}, 
-                    anchor: {x: 15, y: 50}, 
-                    scaledSize: {width: 35, height: 35}
-                }}         
-                />
+              {currentLocation}
             </Map>
           </div>
 

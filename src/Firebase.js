@@ -1,8 +1,8 @@
 import * as firebase from 'firebase/app';
-import firestore from 'firebase/firestore'
-import realtimedb from 'firebase/database';
+import 'firebase/firestore'
+import 'firebase/database';
 
-const settings = {timestampsInSnapshots: true};
+//const settings = {timestampsInSnapshots: true};
 
 var firebaseConfig = {
     apiKey: "AIzaSyDa7UmoVd48-L-RaPXIyFymDHcod5wG_Pk",
@@ -16,6 +16,6 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-firebase.firestore().settings(settings);
+//firebase.firestore().settings(settings);
 
 export default firebase;
