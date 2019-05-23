@@ -192,5 +192,5 @@ class Realtime extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: 'AIzaSyByXl0CVZ7VkRclVRJviFTzAKZe-f6V1ww'
+  apiKey: ''
 })(Realtime);
