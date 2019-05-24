@@ -143,7 +143,7 @@ class Realtime extends Component {
           name={'Current location'}
           position={this.state.currentLatLng}
           icon={{
-            url: 'https://firebasestorage.googleapis.com/v0/b/iot-project-239110.appspot.com/o/car.png?alt=media&token=4f4923b9-906e-499c-a271-5bae3f47fa91',
+            url: 'https://firebasestorage.googleapis.com/v0/b/iot-project-xxxxxx.appspot.com/o/car.png?alt=media&token=4f4923b9-906e-499c-a271-5bae3f47fa91',
             size: { width: 35, height: 35 },
             anchor: { x: 15, y: 50 },
             scaledSize: { width: 35, height: 35 }
